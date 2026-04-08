@@ -13,3 +13,4 @@
 
 **Next action**
 - Review the full `Step_1_working.md` document for any inconsistencies, oversights, or simplifications before moving on.
+- add numbers and letters to todo list so that items can be easily references across docs
