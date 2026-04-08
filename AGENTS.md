@@ -23,7 +23,7 @@
 ### Pattern
 
 <!-- lore:019d6ae8-bc31-7803-bc5f-eecbbe60adc9 -->
-* **Components that create or listen to rules**: System 3 (ops‑ctrl), System 4 (strategy), System 5 (policy), the Scheduler, the Turn‑manager, UI panels, and test harnesses may add, remove, or listen to rules. Each should use \`RulePort\` and can tag rules with \`origin\` to filter their own rules. Protected rules (e.g., heartbeat) stay immutable across components.
+* **Components that create or listen to rules**: Components that create or listen to rules (System 3, System 4, System 5, Scheduler, Turn‑manager, UI panels, tests) use \`RulePort\`. System 3 additionally injects \`RulePort\` to add/remove rules at runtime, marking core rules with \`protected: true\` so they stay immutable. All rule actions are referenced via \`action\_module\`/\`action\_func\` and can be filtered by \`origin\`.
 
 <!-- lore:019d6aa2-2c94-7f5e-859f-feacbee08a7f -->
 * **Event‑driven rule engine**: Each rule defines \`id\`, \`on\` (event types), \`when\` (string expression), \`priority\`, and an \`action\` callable. On registration the \`when\` string is compiled once to a lambda and stored as \`rule.\_cond\`. Listeners are sorted by \`(priority, id)\` for deterministic order.
@@ -35,10 +35,10 @@
 * **Recursive VSM spawning**: System 1 agents may instantiate a full nested VSM (Systems 5‑4‑3‑2‑1) as a child; the child re‑uses the same port instances for lightweight recursion and registers its agents with the turn manager.
 
 <!-- lore:019d6aa2-2c93-7d04-85e6-122048f420c0 -->
-* **Round‑robin turn manager**: Turn manager maintains a flat \`actor\_order\` list of all agents (including nested System 1). When a new agent is spawned it must be appended to this list; the manager pulls the next ID, processes its turn, then moves it to the end.
+* **Round‑robin turn manager**: Turn‑manager implements a hierarchical round‑robin: every VSM owns a TurnManager (actor list, add/remove, next\_actor). A root manager holds sub‑managers and on each global tick selects the next sub‑manager and calls its next\_actor, yielding an interleaved turn order (e.g., sys5 → sys4 → sys3 → sys1 → nested sys1‑0 → nested sys1‑1 …). This keeps deterministic ordering, supports dynamic nested VSM creation, isolates each VSM’s schedule, and adds only one extra call per tick. Persistence of each manager’s actor\_order is handled via PersistencePort. The public API is defined by TurnManagerPort with methods add\_actor(id), remove\_actor(id), next\_actor().
 
 <!-- lore:019d6aa2-2c95-7681-a3ef-d5cfd05a25d2 -->
-* **Rule persistence in YAML**: Rule definitions are stored in \`config/rules.yaml\`. At startup a \`RulePort\` implementation (\`YamlRuleAdapter\`) loads the file into an in‑memory dict, registers each rule with the engine, and writes back any runtime additions/removals. Each rule can include optional \`protected\` (immutable for designers) and \`origin\` (creator component) fields to aid dynamic management.
+* **Rule persistence in YAML**: Rule definitions live in \`config/rules.yaml\`. Each rule can include optional \`protected\` (prevents deletion) and \`origin\` (creator). \`YamlRuleAdapter\` loads the file into an in‑memory dict keyed by \`id\`, writes back on every mutation, and notifies the reactive engine to refresh its listener map, ensuring dynamic updates are persisted.
 
 <!-- lore:019d6ae8-bc30-7141-bb6c-d07bd5396a6d -->
 * **RulePort abstraction for dynamic rule management**: A \`RulePort\` interface defines \`add\_rule(rule)\`, \`remove\_rule(rule\_id)\`, and \`list\_rules()\`. Concrete adapters (e.g., \`YamlRuleAdapter\`) implement the interface, keep the rule list in memory, persist changes to the YAML file, and update the engine’s listener map. All components inject this port to manage rules at runtime.

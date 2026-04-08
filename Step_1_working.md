@@ -323,3 +323,119 @@ class ReactiveEngine:
 The **event‑driven reactive rule engine** turns every piece of system activity into an event on a central bus. Rules subscribe to the event types they care about, evaluate a lightweight condition, and execute an action. Because the engine only walks the listeners for the incoming event, the per‑tick cost is proportional to the *relevant* rules, not the total rule count. The design fits naturally with the existing three‑clock model: the global step, actor step, and any custom clocks are emitted as events, so time‑based rules are just a special case of event‑based rules. Persistence, dynamic registration, and deterministic ordering are built‑in, making the engine ready for both the prototype phase and later scaling.
 
 *If you approve this design, we can commit the description into `Step_1_working.md` and begin implementing the classes.*
+
+## Design for Item 3 – TriggerEngine / Dynamic Rule Management (System 3)
+
+**Why System 3 needs dynamic rule control**
+- It must create, enable, or delete rules at runtime (e.g., add a contract‑specific rule, remove a temporary rule after a report).
+- Some core rules should stay immutable; we mark those with `protected: true`.
+
+**Proposed structure**
+1. **RulePort abstraction** – an interface exposing `add_rule(rule)`, `remove_rule(rule_id)`, `list_rules()`.
+2. **YamlRuleAdapter** – concrete implementation that:
+   - Keeps an in‑memory dict of rule objects keyed by `id`.
+   - Writes the full rule list back to `config/rules.yaml` on each mutation so the state survives restarts.
+   - Updates the reactive engine’s listener map whenever a rule is added or removed.
+3. **Rule schema extension** – add optional fields:
+   ```yaml
+   - id: heartbeat
+     on: [global_tick]
+     when: "payload['step'] % 3 == 0"
+     priority: 10
+     protected: true   # System 3 cannot delete this rule
+     action: |
+       def fire(ev):
+           ev.bus.publish(type="heartbeat", payload={"step": ev.payload['step']})
+   ```
+4. **System 3 integration** – inject the `RulePort` into System 3’s constructor and call:
+   ```python
+   self.rule_port.add_rule(new_rule_dict)
+   self.rule_port.remove_rule('heartbeat')
+   ```
+5. **Bootstrap changes** – instantiate `YamlRuleAdapter`, load the YAML, pass the same instance to both the reactive engine and System 3.
+
+**Additional helpers (optional)**
+- `RuleManager` – thin façade that updates the port **and** the engine in one call.
+- `RuleChangeEvent` – internal event type (`rule_added`, `rule_removed`) that other components can listen to.
+- `RuleValidator` – validates the schema and compiles the `when` expression before insertion.
+
+**Resulting benefits**
+- Uniform way for any component (System 3, System 4, UI, tests) to manage rules.
+- Guarantees deterministic ordering and persistence.
+- Allows marking core rules as protected while still exposing full CRUD to System 3.
+- Keeps the design modular; swapping the YAML backend for a DB later only requires a new `RulePort` implementation.
+
+## Design for Item 4 – Turn‑manager (Hybrid Hierarchical)  
+
+**Purpose**  
+The Turn‑manager schedules actors (systems) each step. For a VSM that can contain nested VSMs (e.g., System 1 owning its own VSM), we use a hierarchical manager where each VSM owns a local Turn‑manager and a root manager interleaves them.
+
+**Data model**  
+```python
+class TurnManagerPort(ABC):
+    @abstractmethod
+    def add_actor(self, actor_id: str) -> None: ...
+    @abstractmethod
+    def remove_actor(self, actor_id: str) -> None: ...
+    @abstractmethod
+    def next_actor(self) -> Optional[str]: ...
+
+class InMemoryTurnManager(TurnManagerPort):
+    def __init__(self):
+        self.actor_order: List[str] = []
+        self._cursor = 0
+
+    def add_actor(self, actor_id):
+        if actor_id not in self.actor_order:
+            self.actor_order.append(actor_id)
+
+    def remove_actor(self, actor_id):
+        if actor_id in self.actor_order:
+            idx = self.actor_order.index(actor_id)
+            self.actor_order.pop(idx)
+            if idx < self._cursor:
+                self._cursor -= 1
+            self._cursor %= len(self.actor_order) if self.actor_order else 0
+
+    def next_actor(self):
+        if not self.actor_order:
+            return None
+        aid = self.actor_order[self._cursor]
+        self._cursor = (self._cursor + 1) % len(self.actor_order)
+        return aid
+```
+
+**Hybrid hierarchical scheduling**  
+*Root manager* holds a list of sub‑managers (one per child VSM). On each global tick it selects the next sub‑manager and asks it for its `next_actor()`. The sub‑manager then returns its actor ID. This yields an interleaved sequence such as:
+
+```
+global step → root selects sub‑manager → sub‑manager yields actor
+1 → tm_sys5 → sys5‑0
+2 → tm_sys4 → sys4‑0
+3 → tm_sys3 → sys3‑0
+4 → tm_sys1 → sys1‑0   (parent VSM)
+5 → tm_sys1 → sys1‑0‑0 (nested VSM)
+6 → tm_sys1 → sys1‑0‑1
+7 → tm_sys5 → sys5‑0
+…
+```
+
+**Benefits**  
+- Each VSM can reorder its own actors independently.  
+- The root controls how much time each nested VSM gets (simple round‑robin across sub‑managers).  
+- Minimal call overhead: one `next_submanager()` + one `next_actor()` per global step.  
+- Easy persistence: each manager can save its `actor_order` via `PersistencePort`.  
+- Rule‑engine integration: `turn_tick` events contain both `sub_manager` and `actor` IDs, enabling rules that target a specific VSM or the whole system.
+
+**Interaction points**  
+- **System 1** creates a nested `TurnManager` and registers it with its parent’s manager via `add_actor(child_tm.id)`.  
+- **SchedulerPort / TriggerEngine** emits a `global_tick` event; the root manager consumes it to produce `turn_tick`.  
+- **PersistencePort** saves each manager’s `actor_order` on shutdown and restores on startup.  
+
+**Next steps**  
+1. Add `TurnManagerPort` abstract class in `ports/`.  
+2. Implement `InMemoryTurnManager` in `adapters/turn_manager.py`.  
+3. Implement `HierarchicalTurnManager` that holds sub‑managers and performs the interleaved scheduling.  
+4. Wire the root manager into the bootstrap and inject it where needed.  
+5. Add a unit test that creates a nested VSM with two levels of managers and asserts the expected interleaved turn order.
+
