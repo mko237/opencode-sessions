@@ -30,16 +30,13 @@
 * **Missing SkillPort abstraction**: Skill‑based extensibility currently uses RulePort and ToolPort; without a dedicated SkillPort the skill lifecycle (load, register, invoke) mixes concerns and hampers future swapping.
 
 <!-- lore:019d6eb5-3fb6-7d00-8008-a828b78103c8 -->
-* **Rule dataclass missing compiled condition and protected flag**: Rule dataclass currently defines only id, on, when, priority, action. Add explicit fields for the compiled condition and protected flag: \`\_cond: Callable\[\[Dict], bool] = field(init=False, repr=False)\` and \`protected: bool = False\`. Align this with the YAML rule schema used by \`YamlRuleAdapter\`: each rule entry in \`config/rules.yaml\` includes \`id\`, \`on\` (list of event types), \`when\` (condition expression), optional \`priority\` (default 0), optional \`protected\`, optional \`origin\`, and \`action\` (module/function reference or inline code). This combined definition ensures the in‑code model matches persisted YAML and makes rule handling self‑contained.
+* **Rule dataclass missing compiled condition and protected flag**: Rule dataclass should include a compiled condition field and a protected flag. Add \`\_cond: Callable\[\[Dict], bool] = field(init=False, repr=False)\` to store the compiled lambda for the \`when\` expression, and \`protected: bool = False\` to mark immutable core rules. Ensure \`add\_rule\` compiles the \`when\` string once (e.g., \`rule.\_cond = eval("lambda ctx: " + rule.when)\`) and stores it, avoiding repeated eval on each event. This aligns the in‑code model with the YAML schema used by \`YamlRuleAdapter\`, which already supports optional \`protected\` and \`origin\` fields.
 
 <!-- lore:019d6aa2-2c99-71a2-a822-d7e1c393d4e6 -->
 * **SchedulerPort coupling**: If \`SchedulerPort\` directly imports or calls \`EventBusPort\`, swapping the scheduler becomes hard. Keep \`SchedulerPort\` abstract and inject the bus only where needed.
 
 <!-- lore:019d6ee2-425f-76ce-884e-4d7ab31f9a04 -->
 * **Step 1 design deviations from VSM**: Step 1 design deviations: missing System 2 & 5 definitions; TurnManagerPort absent; undefined THRESHOLD; cursor modulo zero‑division bug; missing HierarchicalTurnManager stub; missing imports and ListenerMap typo (ListenerMap alias should be Dict\[str, List\[Rule]]); duplicate bus subscriptions. Recommend fixing these now.
-
-<!-- lore:019d6aa2-2c98-7316-a156-5eb6c7ef15c7 -->
-* **Uncompiled rule conditions**: Leaving \`when\` strings uncompiled forces \`eval\` on every event, hurting performance. Always compile once during \`add\_rule\` and store the lambda.
 
 <!-- lore:019d6eb5-3fb7-7989-b6ba-7e1dfc23f91b -->
 * **Undefined THRESHOLD constant in recursion pseudo‑code**: The recursion trigger uses \`THRESHOLD\` but never defines it. Declare \`THRESHOLD = 0.7\` (or expose via ConfigPort) so the rule‑based spawning logic is executable.
@@ -78,6 +75,9 @@
 
 <!-- lore:019d6aa2-2c96-7ce9-9639-4d8e3cfecaca -->
 * **Skill‑based extensibility**: Each skill is a YAML file under \`skills/\`. \`SkillRegistry\` loads all \`\*.yaml\` files into a dict. \`SkillExecutor\` builds a prompt, calls \`LLMPort\`, parses JSON output, and dispatches to the appropriate \`ToolPort\` or handler.
+
+<!-- lore:019d6f3b-f5f1-7ea4-b7fe-50a903e073b2 -->
+* **Step‑N working document template**: Create a markdown file \`Step\_N\_working.md\` for each design step. Use header \`# Step N – Working Document\`, a \`## Goal\` paragraph, then a \`## Section Overview\` list of checklist items copied from the corresponding \`## N.x\` section of \`review.todo.md\`. Mirror the format of \`Step\_1\_working.md\` so each step’s tasks are tracked in a dedicated file.
 
 <!-- lore:019d6e3a-e513-7904-b3ef-c61d3aa34c51 -->
 * **TurnManagerPort abstract interface**: Defines three abstract methods: add\_actor(id), remove\_actor(id), next\_actor() -> Optional\[str]. Implementations manage an ordered actor list and cursor for round‑robin scheduling.
