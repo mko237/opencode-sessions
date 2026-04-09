@@ -1,3 +1,10 @@
+# Skill tool usage:
+  - skills often recommend using a workflow.. if a task can be accomplished via the workflow perfer following the relevant steps instead of solving a task another way
+  - skills are written for you the agent/assistant and also meant to be performed by you, not the user. 
+## Python Usage in skills:
+  - some skills may have and recommend python script usage.. always use `uv run python` instead of just calling python directly
+  - prioritizebuilt in scripts from skills over tools liek grep / glob / read (unless specified or no alternatives exist)
+
 <!-- This section is maintained by the coding agent via lore (https://github.com/BYK/opencode-lore) -->
 ## Long-term Knowledge
 
@@ -15,7 +22,7 @@
 * **Cursor modulo zero‑division in TurnManager**: Fix TurnManager.remove\_actor: guard empty actor\_order before modulo to avoid ZeroDivisionError.
 
 <!-- lore:019d6ee4-a4dc-77eb-a921-ca9cc65fbbe7 -->
-* **Design 2 duplicate bus subscriptions**: ReactiveEngine adds a bus subscription inside the per‑rule loop, causing multiple identical callbacks for the same event type. This adds O(N) overhead and can double‑process events.
+* **Design 2 duplicate bus subscriptions**: Duplicate bus subscriptions in ReactiveEngine cause multiple identical callbacks per event type, adding O(N) overhead and double‑processing. Fix by maintaining a set of already‑subscribed event types; on add\_rule, subscribe to the bus only if the event type isn’t in the set, then add it. This ensures each event type has a single subscription and streamlines listener registration.
 
 <!-- lore:019d6eb5-3fb8-731c-83fc-7da3ede56fef -->
 * **HierarchicalTurnManager stub missing**: Add HierarchicalTurnManager class with sub\_managers list and round‑robin next\_actor delegation.
@@ -29,19 +36,19 @@
 <!-- lore:019d6e3a-e518-761c-bf55-eb3b9e592047 -->
 * **Missing SkillPort abstraction**: Skill‑based extensibility currently uses RulePort and ToolPort; without a dedicated SkillPort the skill lifecycle (load, register, invoke) mixes concerns and hampers future swapping.
 
-<!-- lore:019d6eb5-3fb6-7d00-8008-a828b78103c8 -->
-* **Rule dataclass missing compiled condition and protected flag**: Rule dataclass should include a compiled condition field and a protected flag. Add \`\_cond: Callable\[\[Dict], bool] = field(init=False, repr=False)\` to store the compiled lambda for the \`when\` expression, and \`protected: bool = False\` to mark immutable core rules. Ensure \`add\_rule\` compiles the \`when\` string once (e.g., \`rule.\_cond = eval("lambda ctx: " + rule.when)\`) and stores it, avoiding repeated eval on each event. This aligns the in‑code model with the YAML schema used by \`YamlRuleAdapter\`, which already supports optional \`protected\` and \`origin\` fields.
+<!-- lore:019d7065-1a04-7027-bf54-b785b4c38cc0 -->
+* **Ports defined only in design docs, no code implementation**: Current repo lists EventBusPort, PersistencePort, LLMPort, ToolPort, SchedulerPort, ConfigPort, RulePort, TurnManagerPort, and MemoryPort in markdown (step\_1\_working.md, sbom.potential.md) but there is no ports/ package or Python class definitions. Without concrete abstract classes the interfaces aren’t type‑checked or enforceable, delaying adapter implementation. Add a ports/ directory with one abstract base class per port matching the documented method signatures, then build concrete adapters under adapters/.
 
 <!-- lore:019d6aa2-2c99-71a2-a822-d7e1c393d4e6 -->
 * **SchedulerPort coupling**: If \`SchedulerPort\` directly imports or calls \`EventBusPort\`, swapping the scheduler becomes hard. Keep \`SchedulerPort\` abstract and inject the bus only where needed.
-
-<!-- lore:019d6ee2-425f-76ce-884e-4d7ab31f9a04 -->
-* **Step 1 design deviations from VSM**: Step 1 design deviations: missing System 2 & 5 definitions; TurnManagerPort absent; undefined THRESHOLD; cursor modulo zero‑division bug; missing HierarchicalTurnManager stub; missing imports and ListenerMap typo (ListenerMap alias should be Dict\[str, List\[Rule]]); duplicate bus subscriptions. Recommend fixing these now.
 
 <!-- lore:019d6eb5-3fb7-7989-b6ba-7e1dfc23f91b -->
 * **Undefined THRESHOLD constant in recursion pseudo‑code**: The recursion trigger uses \`THRESHOLD\` but never defines it. Declare \`THRESHOLD = 0.7\` (or expose via ConfigPort) so the rule‑based spawning logic is executable.
 
 ### Pattern
+
+<!-- lore:019d7079-02b6-75fc-a718-6f35c3031d00 -->
+* **Append port‑interface table to step\_2\_2\_working.md**: Inserted a markdown table of all ports into task 11 of \`step\_2\_2\_working.md\`; the table lists each port, brief description, minimal method signatures, and current implementation status, making the ports‑interface visible to handoff scripts.
 
 <!-- lore:019d6eb5-3fba-7a2f-adb7-1213848148be -->
 * **Centralized port list for documentation**: Maintain a single \`Ports\` table (e.g., in sbom.potential.md) listing all abstract ports: EventBusPort, PersistencePort, LLMPort, ToolPort, SchedulerPort, ConfigPort, RulePort, TurnManagerPort, MemoryPort. Reference this table from each design section to avoid duplicate edits when ports change.
@@ -55,23 +62,23 @@
 <!-- lore:019d6aa2-2c96-7ce9-9639-4d8f36414cfe -->
 * **Observation memory per agent**: Agents write a YAML log (\`data/agent\_{id}\_log.yaml\`) with entries \`{timestamp, event\_type, input, output}\`. \`MemoryPort\` abstracts \`append\`, \`load\_all\`, and \`query\` so agents can read/write without caring about storage format.
 
-<!-- lore:019d6e3a-e516-7f4b-aec2-623e89fff0ee -->
-* **ReactiveEngine listener registration**: ReactiveEngine listener registration: on add\_rule the engine subscribes to the bus for each rule's event type, causing duplicate callbacks. Fix by tracking a set of already‑subscribed types and subscribe only once per type.
-
 <!-- lore:019d6e3a-e514-7ce2-91eb-69a07e9f870c -->
 * **Recursion trigger based on report complexity**: System 1 agents evaluate their latest report; if report.complexity\_score > THRESHOLD (e.g., 0.7) they instantiate a child VSM and attach it, enabling arbitrary nesting depth.
 
 <!-- lore:019d6aa2-2c92-7e64-b0bf-985e941bcd39 -->
 * **Recursive VSM spawning**: System 1 agents may instantiate a full nested VSM (Systems 5‑4‑3‑2‑1) as a child; the child re‑uses the same port instances for lightweight recursion and registers its agents with the turn manager.
 
-<!-- lore:019d6aa2-2c93-7d04-85e6-122048f420c0 -->
-* **Round‑robin turn manager**: Turn‑manager implements a hierarchical round‑robin: every VSM owns a TurnManager (actor list, add/remove, next\_actor). A root manager holds sub‑managers and on each global tick selects the next sub‑manager and calls its next\_actor, yielding an interleaved turn order (e.g., sys5 → sys4 → sys3 → sys1 → nested sys1‑0 → nested sys1‑1 …). This keeps deterministic ordering, supports dynamic nested VSM creation, isolates each VSM’s schedule, and adds only one extra call per tick. Persistence of each manager’s actor\_order is handled via PersistencePort. The public API is defined by TurnManagerPort with methods add\_actor(id), remove\_actor(id), next\_actor().
+<!-- lore:019d7088-2d2f-7c03-b7da-a755e892f681 -->
+* **review.todo updates for ports and adapters**: Marked port‑interface verification as completed, and added tasks 24‑25 to \`review.todo.md\` to create a \`ports/\` package with abstract classes and implement concrete adapters for each port.
 
 <!-- lore:019d6aa2-2c95-7681-a3ef-d5cfd05a25d2 -->
 * **Rule persistence in YAML**: Rule definitions live in \`config/rules.yaml\`. Each rule can include optional \`protected\` (prevents deletion) and \`origin\` (creator). \`YamlRuleAdapter\` loads the file into an in‑memory dict keyed by \`id\`, writes back on every mutation, and notifies the reactive engine to refresh its listener map, ensuring dynamic updates are persisted.
 
 <!-- lore:019d6ae8-bc30-7141-bb6c-d07bd5396a6d -->
-* **RulePort abstraction for dynamic rule management**: RulePort abstraction for dynamic rule management: defines add\_rule, remove\_rule, list\_rules. Implemented by YamlRuleAdapter which persists to config/rules.yaml and notifies the ReactiveEngine. Now shown in the hexagonal diagram as a core port.
+* **RulePort abstraction for dynamic rule management**: RulePort abstraction for dynamic rule management and rule dataclass details. RulePort defines add\_rule, remove\_rule, list\_rules. Rules are represented by a dataclass that now includes a compiled condition field \`\_cond: Callable\[\[Dict], bool]\` and a \`protected: bool\` flag for immutable core rules. \`add\_rule\` compiles the \`when\` string once into \`\_cond\`. Implemented by YamlRuleAdapter persisting to config/rules.yaml and notifying ReactiveEngine. Shown in the hexagonal diagram as a core port.
+
+<!-- lore:019d7011-5c58-78fd-8063-a4f6091e0ee3 -->
+* **Session‑handoff script for incremental handoff updates**: Session‑handoff scripts live in \`.agents/skills/session-handoff/scripts\` and should be run with the project’s UV‑managed Python environment: \`uv run python \<script>.py\`. The \`create\_handoff.py\` script generates a file in \`.claude/handoffs/\` named \`YYYY-MM-DD-HHMMSS-\[slug].md\`. It pre‑fills the timestamp, project path, current git branch, recent commits, and any modified files (e.g., the port‑interface table added to \`step\_2\_2\_working.md\`).
 
 <!-- lore:019d6aa2-2c96-7ce9-9639-4d8e3cfecaca -->
 * **Skill‑based extensibility**: Each skill is a YAML file under \`skills/\`. \`SkillRegistry\` loads all \`\*.yaml\` files into a dict. \`SkillExecutor\` builds a prompt, calls \`LLMPort\`, parses JSON output, and dispatches to the appropriate \`ToolPort\` or handler.

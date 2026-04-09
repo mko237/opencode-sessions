@@ -11,15 +11,18 @@
 
 ## 2. Key Components (ordered by dependency)
 ### 2.1 Agents (most fundamental)
-- [ ] 5) Ensure responsibilities of MGMT‑5, MGMT‑4, MGMT‑3, OPS‑1, OPS‑2 are distinct and non‑overlapping.
-- [ ] 6) Validate MGMT‑3’s logic for spawning System 1 agents matches the recursion requirement.
-- [ ] 7) Identify any missing agent types (e.g., System 2, System 5) and decide if they need explicit definitions.
+- [x] 5) Ensure responsibilities of MGMT‑5, MGMT‑4, MGMT‑3, OPS‑1, OPS‑2 are distinct and non‑overlapping.
+- [x] 6) Validate MGMT‑3’s logic for spawning System 1 agents matches the recursion requirement.
+- [x] 7) Identify any missing agent types (e.g., System 2, System 5) and decide if they need explicit definitions.
+- work for the above have been documented in step_2_1_working.md use the full file contents as a more detailed reference
 
 ### 2.2 Ports & Adapters (next layer)
-- [ ] 8) Confirm each port interface (EventBusPort, PersistencePort, LLMPort, ToolPort, SchedulerPort, ConfigPort) is minimal yet complete.
+- [x] 8) Confirm each port interface (EventBusPort, PersistencePort, LLMPort, ToolPort, SchedulerPort, ConfigPort) is minimal yet complete.
 - [ ] 9) Verify MVP concrete adapters (InProcessBus, YamlFileStore, LocalLLMAdapter, LocalToolRegistry, SimpleTriggerEngine, YamlConfigLoader) fully implement their contracts.
 - [ ] 10) Spot any coupling between ports that could hinder future swapping (e.g., SchedulerPort depending on EventBusPort).
-- [ ] 11) Determine whether an additional SkillPort is needed for the skill‑based extensibility layer.
+- [x] 11) Determine whether an additional SkillPort is needed for the skill‑based extensibility layer.
+- [ ] 24) Add ports/ package with abstract base classes for each defined port.
+- [ ] 25) Implement concrete adapters (InProcessBus, YamlFileStore, LocalLLMAdapter, etc.) under adapters/.
 
 ### 2.3 Runtime Scheduling & Simulation (built on ports)
 - [ ] 12) Review the three‑clock definitions and their interactions; ensure no ambiguity about which clock drives which events.
