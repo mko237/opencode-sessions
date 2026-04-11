@@ -3,26 +3,27 @@
   "curator": {
     "enabled": true, 
     "onIdle": true,
-    "afterTurns": 10,
-    "maxEntries": 25
+    "afterTurns": 20,
+    "maxEntries": 45
   },
   "agentsFile": {
     "enabled": true,
     "path": "AGENTS.md" 
   },
   "budget": {
-    "distilled": 0.20,
+    "distilled": 0.25,
     "raw": 0.5,
     "output": 0.20,
-    "ltm": 0.10
+    "ltm": 0.05
   },
   "distillation": {
-    "minMessages": 8,
-    "maxSegment": 50
+    "minMessages": 20,
+    "maxSegment": 100,
+    "metaThreshold": 20
   },
   "pruning": {
     "retention": 120,
     "maxStorage": 1024
   },
-  "crossProject": true
+  "crossProject": false
 }

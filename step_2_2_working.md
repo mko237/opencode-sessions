@@ -1,10 +1,15 @@
 # Step 2‑2 – Working Document
 
 ## Tasks (2.2 – Ports & Adapters)
-- [ ] 8) Confirm each port interface (EventBusPort, PersistencePort, LLMPort, ToolPort, SchedulerPort, ConfigPort,RulePort,TurnManagerPort,MemoryPort) is minimal yet complete.
-- [ ] 9) Verify MVP concrete adapters (InProcessBus, YamlFileStore, LocalLLMAdapter, LocalToolRegistry, SimpleTriggerEngine, YamlConfigLoader) fully implement their contracts.
-- [ ] 10) Spot any coupling between ports that could hinder future swapping (e.g., SchedulerPort depending on EventBusPort).
-- [ ] 11) Determine whether an additional SkillPort is needed for the skill‑based extensibility layer.
+- [x] 8) Confirm each port interface (EventBusPort, PersistencePort, LLMPort, ToolPort, SchedulerPort, ConfigPort,RulePort,TurnManagerPort,MemoryPort) is minimal yet complete.
+  - [x] 8.1) Memery port is incorrect. it needs to resemble the designs from https://www.sanity.io/blog/how-we-solved-the-agent-memory-problem and https://mastra.ai/research/observational-memory
+    - results stored in `step_2_2_item_8_1.md`
+- [x] 9) Verify MVP concrete adapters (InProcessBus, YamlFileStore, LocalLLMAdapter, LocalToolRegistry, SimpleTriggerEngine, YamlConfigLoader) fully implement their contracts.
+- [x] 10) Spot any coupling between ports that could hinder future swapping (e.g., SchedulerPort depending on EventBusPort).  - see step_2_2_item_10.md
+- [/] 11) Determine whether an additional SkillPort is needed for the skill‑based extensibility layer.  - skipped, review later
+
+
+## Item 8
 
 | Port | Description | Methods / Properties (minimal API) | Notes |
 |------|-------------|--------------------------------------|-------|
