@@ -7,13 +7,13 @@
     "maxEntries": 45
   },
   "agentsFile": {
-    "enabled": true,
+    "enabled": false,
     "path": "AGENTS.md" 
   },
   "budget": {
-    "distilled": 0.25,
-    "raw": 0.5,
-    "output": 0.20,
+    "distilled": 0.15,
+    "raw": 0.68,
+    "output": 0.10,
     "ltm": 0.05
   },
   "distillation": {

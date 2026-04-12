@@ -365,6 +365,8 @@ The **event‑driven reactive rule engine** turns every piece of system activity
 - Allows marking core rules as protected while still exposing full CRUD to System 3.
 - Keeps the design modular; swapping the YAML backend for a DB later only requires a new `RulePort` implementation.
 
+Each VSM owns its own TurnManagerPort instance and registers it with its parent VSM via `add_actor(child_tm.id)`. This hierarchical registration ensures nested VSMs are included in the root scheduling loop.
+
 ## Design for Item 4 – Turn‑manager (Hybrid Hierarchical)  
 
 **Purpose**  
@@ -383,16 +385,24 @@ class TurnManagerPort(ABC):
 class InMemoryTurnManager(TurnManagerPort):
     def __init__(self):
         self.actor_order: List[str] = []
+        self._actors: Set[str] = set()
+        self._idx: Dict[str, int] = {}
         self._cursor = 0
 
     def add_actor(self, actor_id):
-        if actor_id not in self.actor_order:
+        if actor_id not in self._actors:
             self.actor_order.append(actor_id)
+            self._actors.add(actor_id)
+            self._idx[actor_id] = len(self.actor_order) - 1
 
     def remove_actor(self, actor_id):
-        if actor_id in self.actor_order:
-            idx = self.actor_order.index(actor_id)
+        if actor_id in self._actors:
+            idx = self._idx.pop(actor_id)
             self.actor_order.pop(idx)
+            self._actors.remove(actor_id)
+            # update indices for actors after the removed one
+            for i in range(idx, len(self.actor_order)):
+                self._idx[self.actor_order[i]] = i
             if idx < self._cursor:
                 self._cursor -= 1
             self._cursor %= len(self.actor_order) if self.actor_order else 0
@@ -403,6 +413,10 @@ class InMemoryTurnManager(TurnManagerPort):
         aid = self.actor_order[self._cursor]
         self._cursor = (self._cursor + 1) % len(self.actor_order)
         return aid
+
+    def size(self) -> int:
+        """Return the number of registered actors."""
+        return len(self.actor_order)
 ```
 
 **Hybrid hierarchical scheduling**  
@@ -418,6 +432,29 @@ global step → root selects sub‑manager → sub‑manager yields actor
 6 → tm_sys1 → sys1‑0‑1
 7 → tm_sys5 → sys5‑0
 …
+```
+
+**Weighted root manager (optional)**
+
+When different child VSMs should receive unequal time slices, the root can store a weight per sub‑manager and iterate proportionally. A minimal implementation keeps a list of `(sub_manager, weight)` tuples and yields each sub‑manager `weight` times before moving to the next. This preserves O(1) selection while allowing configurable share of the global tick.
+
+```python
+class WeightedRootManager:
+    def __init__(self, sub_managers: List[Tuple[TurnManagerPort, int]]):
+        self.subs = sub_managers
+        self._cursor = 0
+        self._sub_cursor = 0
+
+    def next_submanager(self) -> TurnManagerPort:
+        if not self.subs:
+            return None
+        sub, weight = self.subs[self._cursor]
+        # advance within current weight
+        self._sub_cursor += 1
+        if self._sub_cursor >= weight:
+            self._sub_cursor = 0
+            self._cursor = (self._cursor + 1) % len(self.subs)
+        return sub
 ```
 
 **Benefits**  

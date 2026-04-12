@@ -7,10 +7,18 @@
 ```python
 # ports/memory_port.py
 from abc import ABC, abstractmethod
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Callable
 
 class MemoryPort(ABC):
     """Abstract interface for per‑agent memory persistence."""
+
+    @abstractmethod
+    def query(self, agent_id: str, filter: Callable[[Dict[str, Any]], bool]) -> List[Dict[str, Any]]:
+        """Return a filtered list of entries for *agent_id*.
+
+        *filter* is a callable that receives an entry dict and returns ``True`` for entries to keep.
+        The method should not modify the stored list.
+        """
 
     @abstractmethod
     def load(self, agent_id: str) -> List[Dict[str, Any]]:
@@ -48,10 +56,14 @@ All methods return simple Python types to keep the port implementation‑agnosti
 # adapters/yaml_memory_adapter.py
 import yaml
 from pathlib import Path
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Callable
 from ports.memory_port import MemoryPort
 
 class YamlMemoryAdapter(MemoryPort):
+    # Implements the abstract query method using a simple list comprehension
+    def query(self, agent_id: str, filter: Callable[[Dict[str, Any]], bool]) -> List[Dict[str, Any]]:
+        entries = self.load(agent_id)
+        return [e for e in entries if filter(e)]
     """Persist each agent’s memory as a YAML list in `data/memory/`."""
 
     def __init__(self, base_dir: Path = Path("data/memory")):
@@ -126,6 +138,7 @@ class YamlMemoryAdapter(MemoryPort):
 | `append(agent_id, entry)` | `str`, `dict` | `None` | Entry is appended **atomically** and persisted. |
 | `replace(agent_id, index, entry)` | `str`, `int`, `dict` | `None` | Replaces the exact index; raises `IndexError` if out of bounds. |
 | `clear(agent_id)` | `str` | `None` | All entries for that agent are removed; file is overwritten with an empty list. |
+| `query(agent_id, filter)` | `str`, `Callable[[dict], bool]` | `list[dict]` | Returns entries matching *filter* without modifying storage. |
 
 ---
 

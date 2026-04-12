@@ -12,7 +12,7 @@ Below is a concise analysis of the ports defined in the design (step 1 & 2
 |------|------------------------|--------------------------|
 | **EventBusPort** | `publish(event)`<br>`subscribe(event_type, handler)` | Pub/sub backbone for all components |
 | **PersistencePort** | `read(path) → str`<br>`write(path, content)`<br>`list_dir(path) → List[str]` | Simple file‑based storage |
-| **LLMPort** | `generate(prompt, **kwargs) → str` | LLM access |
+| **LLMPort** | `generate(prompt, **kwargs) → str`<br>`build_prompt(**kwargs) → str` | LLM access |
 | **ToolPort** | `execute(tool_name, **kwargs) → Any` | External‑tool registry |
 | **SchedulerPort** | `schedule(callback, delay)`<br>`cancel(job_id)` | Timer / trigger service |
 | **ConfigPort** | `get(key) → Any`<br>`set(key, value)` | Config lookup |

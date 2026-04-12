@@ -24,12 +24,13 @@
 - `RulePort`
 - `TurnManagerPort`
 - `MemoryPort`
+- `ClockPort`
 
 ## 3. Concrete Adapters (implementations of the ports)
 
 | Port | Adapter |
 |------|---------|
-| `EventBusPort` | `InProcessBus` (in‑process `queue.Queue` implementation) |
+| `EventBusPort` | `InProcessBus` (singleton in‑process `queue.Queue` implementation) |
 | `PersistencePort` | `YamlFileStore` (writes YAML files under `data/`) |
 | `LLMPort` | `LocalLLMAdapter` (LangChain wrapper around a local LLM) |
 | `ToolPort` | `LocalToolRegistry` (registry of Python callables) |
@@ -39,6 +40,7 @@
 | `TurnManagerPort` | `InMemoryTurnManager` (basic round‑robin) |
 | `TurnManagerPort` (hierarchical) | `HierarchicalTurnManager` (manages sub‑managers for nested VSMs) |
 | `MemoryPort` | `YamlMemoryAdapter` (per‑agent YAML log) |
+| `ClockPort` | `SimpleClock` (singleton, see step_2_3_working.md, Item 12 section ) |
 
 ## 4. Runtime Engines / Services
 

@@ -18,21 +18,22 @@
 
 ### 2.2 Ports & Adapters (next layer)
 - [x] 8) Confirm each port interface (EventBusPort, PersistencePort, LLMPort, ToolPort, SchedulerPort, ConfigPort) is minimal yet complete.
-- [ ] 9) Verify MVP concrete adapters (InProcessBus, YamlFileStore, LocalLLMAdapter, LocalToolRegistry, SimpleTriggerEngine, YamlConfigLoader) fully implement their contracts.
-- [ ] 10) Spot any coupling between ports that could hinder future swapping (e.g., SchedulerPort depending on EventBusPort).
+- [x] 9) Verify MVP concrete adapters (InProcessBus, YamlFileStore, LocalLLMAdapter, LocalToolRegistry, SimpleTriggerEngine, YamlConfigLoader) fully implement their contracts.
+- [x] 10) Spot any coupling between ports that could hinder future swapping (e.g., SchedulerPort depending on EventBusPort).
 - [x] 11) Determine whether an additional SkillPort is needed for the skill‑based extensibility layer.
-- [ ] 24) Add ports/ package with abstract base classes for each defined port.
-- [ ] 25) Implement concrete adapters (InProcessBus, YamlFileStore, LocalLLMAdapter, etc.) under adapters/.
+- work for the above have been documented in step_2_2_working.md use the full file contents as a more detailed reference
 
 ### 2.3 Runtime Scheduling & Simulation (built on ports)
-- [ ] 12) Review the three‑clock definitions and their interactions; ensure no ambiguity about which clock drives which events.
-- [ ] 13) Validate the TriggerEngine rule example (global_step heartbeat) and test edge cases (conflicts, ordering).
-- [ ] 14) Assess whether the simple round‑robin turn management will scale with many System 1 agents.
+- [x] 12) Review the three‑clock definitions and their interactions; ensure no ambiguity about which clock drives which events.
+- [x] 13) Validate the TriggerEngine rule example (global_step heartbeat) and test edge cases (conflicts, ordering).
+- [x] 14) Assess whether the simple round‑robin turn management will scale with many System 1 agents.
+- work for the above have been documented in step_2_3_working.md use the full file contents as a more detailed reference
 
 ### 2.4 LLM Agents & Memory (uses ports)
 - [ ] 15) Examine LLMPort prompt construction (f‑string) for readability and future templating needs.
 - [ ] 16) Verify the Determinism note (seed handling) is captured in the LLMPort API.
 - [ ] 17) Review MemoryPort API (`append`, `load_all`, `query`) for completeness; consider bulk‑load or delete ops.
+      - note: MemoryPort has been documented in `step_2_2_item_8_1.md`
 - [ ] 18) Check observation‑memory log format (YAML entries) for consistency and easy parsing.
 - [ ] 19) Ensure ToolPort registration/discovery does not create circular imports with agents.
 

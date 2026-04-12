@@ -18,7 +18,7 @@
 | **PersistencePort** | Abstract storage layer for reading/writing files or other durable data. | `read(path) → str`
 `write(path, content)`
 `list_dir(path) → List[str]` | Mentioned in the design; implementation (e.g., `YamlFileStore`) not present in the repo. |
-| **LLMPort** | Wrapper around an LLM backend (local model, API client, etc.). | `generate(prompt, **kwargs) → str` | Interface only; concrete adapters such as `LocalLLMAdapter` are planned. |
+| **LLMPort** | Wrapper around an LLM backend (local model, API client, etc.). | `generate(prompt, **kwargs) → str`<br>`build_prompt(**kwargs) → str` | Interface only; concrete adapters such as `LocalLLMAdapter` are planned. |
 | **ToolPort** | Registry/execution interface for external tools (shell commands, python scripts, etc.). | `execute(tool_name, **kwargs) → Any` | No concrete `LocalToolRegistry` exists yet. |
 | **SchedulerPort** | Simple timer/trigger service for delayed callbacks. | `schedule(callback, delay)` – schedule a call after *delay* steps/ticks
 `cancel(job_id)` – cancel a scheduled job | Planned concrete `SimpleTriggerEngine` is not in the codebase. |
