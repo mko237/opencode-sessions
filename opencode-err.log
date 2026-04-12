@@ -1,43 +1,18 @@
-INFO  2026-04-12T03:16:53 +378ms service=default version=1.4.3 args=["--print-logs"] opencode
-INFO  2026-04-12T03:16:53 +1ms service=default directory=/home/miko/Documents/opencode-sessions creating instance
-INFO  2026-04-12T03:16:53 +5ms service=project directory=/home/miko/Documents/opencode-sessions fromDirectory
-INFO  2026-04-12T03:16:53 +41ms service=db path=/home/miko/.local/share/opencode/opencode.db opening database
-INFO  2026-04-12T03:16:53 +12ms service=db count=10 mode=bundled applying migrations
-INFO  2026-04-12T03:16:53 +24ms service=config path=/home/miko/.config/opencode/config.json loading
-INFO  2026-04-12T03:16:53 +1ms service=config path=/home/miko/.config/opencode/opencode.json loading
-INFO  2026-04-12T03:16:53 +5ms service=config path=/home/miko/.config/opencode/opencode.jsonc loading
+INFO  2026-04-12T20:46:16 +359ms service=default version=1.4.3 args=["--print-logs"] opencode
+INFO  2026-04-12T20:46:16 +1ms service=default directory=/home/miko/Documents/opencode-sessions creating instance
+INFO  2026-04-12T20:46:16 +5ms service=project directory=/home/miko/Documents/opencode-sessions fromDirectory
+INFO  2026-04-12T20:46:16 +33ms service=db path=/home/miko/.local/share/opencode/opencode.db opening database
+INFO  2026-04-12T20:46:16 +3ms service=db count=10 mode=bundled applying migrations
+INFO  2026-04-12T20:46:16 +27ms service=config path=/home/miko/.config/opencode/config.json loading
+INFO  2026-04-12T20:46:16 +0ms service=config path=/home/miko/.config/opencode/opencode.json loading
+INFO  2026-04-12T20:46:16 +6ms service=config path=/home/miko/.config/opencode/opencode.jsonc loading
 [lore] active: /home/miko/Documents/opencode-sessions
-INFO  2026-04-12T03:16:56 +2635ms service=tui.plugin id=internal:home-footer loading internal tui plugin
-INFO  2026-04-12T03:16:56 +1ms service=tui.plugin id=internal:home-tips loading internal tui plugin
-INFO  2026-04-12T03:16:56 +0ms service=tui.plugin id=internal:sidebar-context loading internal tui plugin
-INFO  2026-04-12T03:16:56 +0ms service=tui.plugin id=internal:sidebar-mcp loading internal tui plugin
-INFO  2026-04-12T03:16:56 +0ms service=tui.plugin id=internal:sidebar-lsp loading internal tui plugin
-INFO  2026-04-12T03:16:56 +0ms service=tui.plugin id=internal:sidebar-todo loading internal tui plugin
-INFO  2026-04-12T03:16:56 +0ms service=tui.plugin id=internal:sidebar-files loading internal tui plugin
-INFO  2026-04-12T03:16:56 +0ms service=tui.plugin id=internal:sidebar-footer loading internal tui plugin
-INFO  2026-04-12T03:16:56 +0ms service=tui.plugin id=internal:plugin-manager loading internal tui plugin
-[0m[31m[lore] session.error received: {
-  "name": "MessageAbortedError",
-  "data": {
-    "message": "Aborted"
-  }
-}[0m
-[0m[31m[lore] session.error received: {
-  "name": "MessageAbortedError",
-  "data": {
-    "message": "Aborted"
-  }
-}[0m
-[0m[31mUnknownError[0m[2m:[0m [1mUnknownError[0m
- data[0m[2m:[0m {
-  [0mmessage[2m:[0m [0m[32m[0m[32m"Agent not found: \"lore-curator\". Available agents: build, explore, general, plan"[0m[0m[0m[2m,[0m
-}[0m[2m,[0m
-
-[0m      [2mat [0m[0m[2m<anonymous>[0m[2m ([0m[0m[36m/$bunfs/root/src/cli/cmd/tui/worker.js[0m[2m:[0m[33m402208[0m[2m:[33m27[0m[2m)[0m
-[0m      [2mat [0m[0m[1m[3m~effect/Effect/successCont[0m[2m ([0m[0m[36m/$bunfs/root/src/cli/cmd/tui/worker.js[0m[2m:[0m[33m10669[0m[2m:[33m32[0m[2m)[0m
-[0m      [2mat [0m[0m[1m[3mrunLoop[0m[2m ([0m[0m[36m/$bunfs/root/src/cli/cmd/tui/worker.js[0m[2m:[0m[33m10495[0m[2m:[33m109[0m[2m)[0m
-[0m      [2mat [0m[0m[1m[3mevaluate[0m[2m ([0m[0m[36m/$bunfs/root/src/cli/cmd/tui/worker.js[0m[2m:[0m[33m10465[0m[2m:[33m32[0m[2m)[0m
-[0m      [2mat [0m[0m[2m<anonymous>[0m[2m ([0m[0m[36m/$bunfs/root/src/cli/cmd/tui/worker.js[0m[2m:[0m[33m10627[0m[2m:[33m26[0m[2m)[0m
-
-[0m[31m[lore] curator error: [0m[31mSyntaxError[0m[2m:[0m [1mJSON Parse error: Unexpected EOF[0m
-[0m
+INFO  2026-04-12T20:46:19 +2206ms service=tui.plugin id=internal:home-footer loading internal tui plugin
+INFO  2026-04-12T20:46:19 +1ms service=tui.plugin id=internal:home-tips loading internal tui plugin
+INFO  2026-04-12T20:46:19 +0ms service=tui.plugin id=internal:sidebar-context loading internal tui plugin
+INFO  2026-04-12T20:46:19 +0ms service=tui.plugin id=internal:sidebar-mcp loading internal tui plugin
+INFO  2026-04-12T20:46:19 +0ms service=tui.plugin id=internal:sidebar-lsp loading internal tui plugin
+INFO  2026-04-12T20:46:19 +0ms service=tui.plugin id=internal:sidebar-todo loading internal tui plugin
+INFO  2026-04-12T20:46:19 +0ms service=tui.plugin id=internal:sidebar-files loading internal tui plugin
+INFO  2026-04-12T20:46:19 +0ms service=tui.plugin id=internal:sidebar-footer loading internal tui plugin
+INFO  2026-04-12T20:46:19 +0ms service=tui.plugin id=internal:plugin-manager loading internal tui plugin
