@@ -16,3 +16,17 @@ INFO  2026-04-12T20:46:19 +0ms service=tui.plugin id=internal:sidebar-todo loadi
 INFO  2026-04-12T20:46:19 +0ms service=tui.plugin id=internal:sidebar-files loading internal tui plugin
 INFO  2026-04-12T20:46:19 +0ms service=tui.plugin id=internal:sidebar-footer loading internal tui plugin
 INFO  2026-04-12T20:46:19 +0ms service=tui.plugin id=internal:plugin-manager loading internal tui plugin
+[0m[31m[lore] session.error received: {
+  "name": "MessageAbortedError",
+  "data": {
+    "message": "Aborted"
+  }
+}[0m
+[0m[31m[lore] session.error received: {
+  "name": "MessageAbortedError",
+  "data": {
+    "message": "Aborted"
+  }
+}[0m
+[0m[31m[lore] incremental distillation: 100 undistilled messages in ses_27c8d233dffe[0m
+[0m[31m[lore] incremental distillation: 100 undistilled messages in ses_27c8d233dffe[0m

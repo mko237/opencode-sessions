@@ -4,9 +4,10 @@ Each port is defined as a Python ``Protocol`` (PEP 544) so that concrete adapter
 implement the interface without needing to inherit from a base class.
 """
 
-from typing import Protocol, Callable, Any
+from typing import Protocol, Callable, Any, runtime_checkable
 
 
+@runtime_checkable
 class EventBusPort(Protocol):
     """Port contract for an event bus.
 
