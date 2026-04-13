@@ -1,7 +1,7 @@
 # Epic‑Hypothesis Statements
 
 ## Epic 1 – Core Architecture
-**If we** implement a hexagonal ports‑and‑adapters architecture with abstract ports (`EventBusPort`, `PersistencePort`, `LLMPort`, `ToolPort`, `SchedulerPort`, `ConfigPort`, `RulePort`, `TurnManagerPort`, `MemoryPort`) for each VSM subsystem, **then we will** achieve a reusable, interchangeable foundation that reduces integration effort and enables rapid swapping of implementations, **because** agents will depend only on contracts and adapters can be replaced without touching core logic.
+**If we** implement a hexagonal ports‑and‑adapters architecture with abstract ports (`EventBusPort`, `PersistencePort`, `LLMPort`, `ToolPort`, `SchedulerPort`, `ConfigPort`, `RulePort`, `TurnManagerPort`, `MemoryPort`, `ClockPort`) for each VSM subsystem, **then we will** achieve a reusable, interchangeable foundation that reduces integration effort and enables rapid swapping of implementations, **because** agents will depend only on contracts and adapters can be replaced without touching core logic.
 
 ## Epic 2 – Agents & VSM Skeleton
 **If we** build MGMT‑5/4/3 and OPS‑1/2 agents plus a `VSM` class that wires these agents together and registers them with the turn manager, **then we will** have a functional scaffold that demonstrates the VSM hierarchy and recursion capability, **because** the skeleton provides the essential plumbing and agent interfaces needed for higher‑level features.

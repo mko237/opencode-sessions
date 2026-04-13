@@ -1,32 +1,18 @@
-INFO  2026-04-12T20:46:16 +359ms service=default version=1.4.3 args=["--print-logs"] opencode
-INFO  2026-04-12T20:46:16 +1ms service=default directory=/home/miko/Documents/opencode-sessions creating instance
-INFO  2026-04-12T20:46:16 +5ms service=project directory=/home/miko/Documents/opencode-sessions fromDirectory
-INFO  2026-04-12T20:46:16 +33ms service=db path=/home/miko/.local/share/opencode/opencode.db opening database
-INFO  2026-04-12T20:46:16 +3ms service=db count=10 mode=bundled applying migrations
-INFO  2026-04-12T20:46:16 +27ms service=config path=/home/miko/.config/opencode/config.json loading
-INFO  2026-04-12T20:46:16 +0ms service=config path=/home/miko/.config/opencode/opencode.json loading
-INFO  2026-04-12T20:46:16 +6ms service=config path=/home/miko/.config/opencode/opencode.jsonc loading
+INFO  2026-04-13T03:20:13 +459ms service=default version=1.4.3 args=["--print-logs"] opencode
+INFO  2026-04-13T03:20:13 +2ms service=default directory=/home/miko/Documents/opencode-sessions creating instance
+INFO  2026-04-13T03:20:13 +9ms service=project directory=/home/miko/Documents/opencode-sessions fromDirectory
+INFO  2026-04-13T03:20:14 +38ms service=db path=/home/miko/.local/share/opencode/opencode.db opening database
+INFO  2026-04-13T03:20:14 +24ms service=db count=10 mode=bundled applying migrations
+INFO  2026-04-13T03:20:14 +22ms service=config path=/home/miko/.config/opencode/config.json loading
+INFO  2026-04-13T03:20:14 +1ms service=config path=/home/miko/.config/opencode/opencode.json loading
+INFO  2026-04-13T03:20:14 +6ms service=config path=/home/miko/.config/opencode/opencode.jsonc loading
 [lore] active: /home/miko/Documents/opencode-sessions
-INFO  2026-04-12T20:46:19 +2206ms service=tui.plugin id=internal:home-footer loading internal tui plugin
-INFO  2026-04-12T20:46:19 +1ms service=tui.plugin id=internal:home-tips loading internal tui plugin
-INFO  2026-04-12T20:46:19 +0ms service=tui.plugin id=internal:sidebar-context loading internal tui plugin
-INFO  2026-04-12T20:46:19 +0ms service=tui.plugin id=internal:sidebar-mcp loading internal tui plugin
-INFO  2026-04-12T20:46:19 +0ms service=tui.plugin id=internal:sidebar-lsp loading internal tui plugin
-INFO  2026-04-12T20:46:19 +0ms service=tui.plugin id=internal:sidebar-todo loading internal tui plugin
-INFO  2026-04-12T20:46:19 +0ms service=tui.plugin id=internal:sidebar-files loading internal tui plugin
-INFO  2026-04-12T20:46:19 +0ms service=tui.plugin id=internal:sidebar-footer loading internal tui plugin
-INFO  2026-04-12T20:46:19 +0ms service=tui.plugin id=internal:plugin-manager loading internal tui plugin
-[0m[31m[lore] session.error received: {
-  "name": "MessageAbortedError",
-  "data": {
-    "message": "Aborted"
-  }
-}[0m
-[0m[31m[lore] session.error received: {
-  "name": "MessageAbortedError",
-  "data": {
-    "message": "Aborted"
-  }
-}[0m
-[0m[31m[lore] incremental distillation: 100 undistilled messages in ses_27c8d233dffe[0m
-[0m[31m[lore] incremental distillation: 100 undistilled messages in ses_27c8d233dffe[0m
+INFO  2026-04-13T03:20:16 +2737ms service=tui.plugin id=internal:home-footer loading internal tui plugin
+INFO  2026-04-13T03:20:16 +0ms service=tui.plugin id=internal:home-tips loading internal tui plugin
+INFO  2026-04-13T03:20:16 +0ms service=tui.plugin id=internal:sidebar-context loading internal tui plugin
+INFO  2026-04-13T03:20:16 +0ms service=tui.plugin id=internal:sidebar-mcp loading internal tui plugin
+INFO  2026-04-13T03:20:16 +0ms service=tui.plugin id=internal:sidebar-lsp loading internal tui plugin
+INFO  2026-04-13T03:20:16 +0ms service=tui.plugin id=internal:sidebar-todo loading internal tui plugin
+INFO  2026-04-13T03:20:16 +0ms service=tui.plugin id=internal:sidebar-files loading internal tui plugin
+INFO  2026-04-13T03:20:16 +0ms service=tui.plugin id=internal:sidebar-footer loading internal tui plugin
+INFO  2026-04-13T03:20:16 +0ms service=tui.plugin id=internal:plugin-manager loading internal tui plugin
